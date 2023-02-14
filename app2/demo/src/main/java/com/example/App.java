@@ -22,20 +22,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+
 
 /**
  * JavaFX App
@@ -43,6 +39,7 @@ import java.util.List;
 public class App extends Application {
 
     private static Scene scene;
+    String IMG_URL = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     Label lb_title ;
     VBox vb;
@@ -53,13 +50,15 @@ public class App extends Application {
     GridPane gpInfo , gpComp;
     ComboBox day , month , year , formation , competence1 , competence2 , competence3;
     Image img;
-    String IMG_URL = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
     RadioButton r1 , r2;
     ToggleGroup tg ;
     TextArea ta;
+    TextField tnp , temail ,ttel;
+
 
     @Override
     public void start(Stage stage) throws IOException {
+
        vb = new VBox(3);
        vb.setAlignment(Pos.TOP_CENTER);
 
@@ -70,20 +69,25 @@ public class App extends Application {
        vb.getChildren().add(lb_title);
 
        hbInfo = new HBox(89);
-       
        hbInfo.setAlignment(Pos.CENTER);
     
        
        tp1 = new TitledPane("Information Personnelle",hbInfo);
 
+       temail= new TextField();
+       tnp = new TextField();
+       ttel = new TextField();
+
        gpInfo = new GridPane();
        gpInfo.setVgap(10); 
        gpInfo.setHgap(5); 
+
        gpInfo.add(new Label("Nom & Prénom"),0,0);
-       gpInfo.add(new TextField(),1,0);
+       gpInfo.add(tnp,1,0);
        gpInfo.add(new Label("e-mail"),0,1);
-       gpInfo.add(new TextField(),1,1);
-       gpInfo.add(new Label("Tél"),0,2);
+       gpInfo.add(temail,1,1);
+       gpInfo.add(new Label("Tel"),0,2);
+       gpInfo.add(ttel,1,2);
        gpInfo.add(new TextField(),1,2);
        gpInfo.add(new Label("Date de naissance"),0,3);
 
@@ -108,7 +112,7 @@ public class App extends Application {
 
        arr = new  ArrayList<Integer>();
        int years = Year.now().getValue();
-       for(int i = years-20 ; i < years ; i++ )
+       for(int i = years  ; i > years-20; i-- )
        {
          arr.add(i);
        }
@@ -120,7 +124,6 @@ public class App extends Application {
        hbInfoNaiss.getChildren().add(year);
 
        
-
        gpInfo.add(hbInfoNaiss , 1,3);
        gpInfo.add(new Label("Sexe"),0,4);
 
@@ -147,14 +150,11 @@ public class App extends Application {
        formation.getItems().addAll(form);
 
        gpInfo.add(formation,1,5);
-
-
        
        img = new Image(IMG_URL,100,100,false,false);
        ImageView imgv = new ImageView(img);
 
-      
-      
+    
        hbInfo.getChildren().add(gpInfo);
        hbInfo.getChildren().add(imgv);
        
@@ -166,7 +166,7 @@ public class App extends Application {
     
        hbcomp = new HBox(20);
        gpComp = new GridPane();
-       gpComp.setVgap(10); //vertical gap in pixels
+       gpComp.setVgap(10); 
        competence1 = new ComboBox<>();
        competence2 = new ComboBox<>();
        competence3 = new ComboBox<>();
@@ -196,13 +196,13 @@ public class App extends Application {
        gpComp.add(competence2,1,1);
        gpComp.add(new Label("Machine Learning"),0,2);
        gpComp.add(competence3,1,2);
+
+
        hbcomp.getChildren().add(gpComp);
-      
        hbcomp.getChildren().add(sp);
 
-
-
        tp2.setContent(hbcomp);
+
 
        vb.getChildren().add(tp1);
        vb.getChildren().add(tp2);
@@ -226,12 +226,8 @@ public class App extends Application {
 
        vb.getChildren().add(hb1);
 
-      
-       
-       
 
        Scene sc = new Scene(vb,700,600);
-
 
        stage.setTitle("Candidature PFE");
        stage.setScene(sc);
@@ -242,9 +238,6 @@ public class App extends Application {
 
        btnCancel.setOnAction(event -> handleCancel(event));
        btnSend.setOnAction(event -> handleSend(event));
-
-
-
 
     }
 
@@ -271,7 +264,55 @@ public class App extends Application {
           File f = new File("test.html");
           try {
             FileWriter fw = new FileWriter(f,false);
-            fw.write("<html>Rami</html>");
+            RadioButton genderSelectedRadioButton = (RadioButton) tg.getSelectedToggle();
+            fw.write("<html>"+
+                     "<div style='display:flex;justify-content:center'>"+
+                     "<table border=2>"+
+                     "<tr>"+
+                     "<td>"+"<b>Nom & Prénom</b>"+"</td>"+
+                     "<td>"+tnp.getText()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Email </b>"+"</td>"+
+                     "<td>"+temail.getText()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Télephone </b>"+"</td>"+
+                     "<td>"+ttel.getText()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Date de naissance </b>"+"</td>"+
+                     "<td>"+day.getValue()+"/"+month.getValue()+"/"+year.getValue()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Sexe</b>"+"</td>"+
+                     "<td>"+genderSelectedRadioButton.getText()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Formation</b>"+"</td>"+
+                     "<td>"+formation.getValue()+"</td>"+
+                     "</tr>"+
+                     "</table>"+
+                     "<table border=2>"+
+                     "<tr>"+
+                     "<td>"+"<b>JAVA</b>"+"</td>"+
+                     "<td>"+competence1.getValue()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Python</b>"+"</td>"+
+                     "<td>"+competence2.getValue()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Machine Learning</b>"+"</td>"+
+                     "<td>"+competence3.getValue()+"</td>"+
+                     "</tr>"+
+                     "<tr>"+
+                     "<td>"+"<b>Note</b>"+"</td>"+
+                     "<td>"+ta.getText()+"</td>"+
+                     "</tr>"+
+                     "</table>"+
+                     "</div>"+
+                     "</html>");
             fw.close();
             Runtime.getRuntime().exec(new String[] {"open", "test.html"});
         } catch (IOException e) {
